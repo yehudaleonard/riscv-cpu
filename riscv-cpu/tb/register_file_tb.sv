@@ -15,6 +15,8 @@ module register_file_tb;
     logic [31:0] reg_source_1_data;
     logic [31:0] reg_source_2_data;
 
+    logic test_failed;
+
     // DUT instance
     register_file dut (
         .clk(clk),
@@ -33,6 +35,7 @@ module register_file_tb;
     always #5 clk = ~clk;
 
     initial begin
+
         // init
         clk = 0;
         write_enable = 0;
@@ -40,6 +43,8 @@ module register_file_tb;
         reg_data = 0;
         reg_source_1_address = 0;
         reg_source_2_address = 0;
+
+        test_failed = 0;
 
         #10;
 
@@ -50,15 +55,17 @@ module register_file_tb;
         reg_data = 32'h1234ABCD;
         write_enable = 1;
 
-        #10; // one clock edge
+        #10;
 
         write_enable = 0;
 
         reg_source_1_address = 5;
         #1;
 
-        if (reg_source_1_data != 32'h1234ABCD)
+        if (reg_source_1_data != 32'h1234ABCD) begin
             $error("TEST 1 FAILED: write/read mismatch");
+            test_failed = 1;
+        end
 
         // --------------------------------------------------
         // TEST 2: independent registers
@@ -73,8 +80,10 @@ module register_file_tb;
         reg_source_1_address = 10;
         #1;
 
-        if (reg_source_1_data != 32'hDEADBEEF)
+        if (reg_source_1_data != 32'hDEADBEEF) begin
             $error("TEST 2 FAILED: register independence broken");
+            test_failed = 1;
+        end
 
         // --------------------------------------------------
         // TEST 3: x0 must stay zero
@@ -89,8 +98,10 @@ module register_file_tb;
         reg_source_1_address = 0;
         #1;
 
-        if (reg_source_1_data != 0)
+        if (reg_source_1_data != 0) begin
             $error("TEST 3 FAILED: x0 modified");
+            test_failed = 1;
+        end
 
         // --------------------------------------------------
         // TEST 4: dual read test
@@ -100,27 +111,39 @@ module register_file_tb;
 
         #1;
 
-        if (reg_source_1_data != 32'h1234ABCD || reg_source_2_data != 32'hDEADBEEF)
+        if (reg_source_1_data != 32'h1234ABCD ||
+            reg_source_2_data != 32'hDEADBEEF) begin
             $error("TEST 4 FAILED: dual read incorrect");
-        
+            test_failed = 1;
+        end
+
         // --------------------------------------------------
         // TEST 5: write_enable must block writes
         // --------------------------------------------------
-
         reg_destination = 5;
         reg_data = 32'hA7541999;
         write_enable = 0;
 
-        #10; // clock edge occurs
+        #10;
 
         reg_source_1_address = 5;
         #1;
 
-        if (reg_source_1_data != 32'h1234ABCD)
-            $error("TEST 1B FAILED: write occurred while write_enable=0");
+        if (reg_source_1_data != 32'h1234ABCD) begin
+            $error("TEST 5 FAILED: write occurred while write_enable=0");
+            test_failed = 1;
+        end
 
-        $display("ALL REGISTER FILE TESTS PASSED");
+        // --------------------------------------------------
+        // FINAL RESULT
+        // --------------------------------------------------
+        if (!test_failed)
+            $display("ALL REGISTER FILE TESTS PASSED");
+        else
+            $display("REGISTER FILE TESTS FAILED");
+
         $finish;
+
     end
 
 endmodule
