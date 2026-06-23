@@ -13,7 +13,7 @@ output logic [31:0] reg_source_1_data,
 output logic [31:0] reg_source_2_data
 );
 
-logic [31:0] regs [31:0];
+logic [31:0] regs [0:31];
 
 assign reg_source_1_data = regs[reg_source_1_address];
 assign reg_source_2_data = regs[reg_source_2_address];
