@@ -1,12 +1,12 @@
 `timescale 1ns/1ps
 
 module pc(
-input logic clk,
-input logic reset,
+    input logic clk,
+    input logic reset,
 
-input logic [31:0] pc_next,
+    input logic [31:0] pc_next,
 
-output logic [31:0] pc
+    output logic [31:0] pc
 );
 
 always_ff @(posedge clk or posedge reset) begin

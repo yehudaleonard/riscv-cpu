@@ -28,9 +28,6 @@ module control_unit_tb;
 
     initial begin
 
-        // ----------------------------------
-        // INIT
-        // ----------------------------------
         opcode      = 0;
         funct3      = 0;
         funct7      = 0;
@@ -149,7 +146,7 @@ module control_unit_tb;
             test_failed = 1;
             $error("TEST 8 FAILED: invalid instruction handling");
         end
-        
+
         // ----------------------------------
         // FINAL RESULT
         // ----------------------------------

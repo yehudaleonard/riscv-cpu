@@ -33,9 +33,6 @@ module decoder_tb;
 
     initial begin
 
-        // ----------------------------------
-        // INIT
-        // ----------------------------------
         instruction  = 32'b0;
         test_failed   = 0;
 
