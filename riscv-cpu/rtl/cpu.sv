@@ -1,6 +1,8 @@
 `timescale 1ns/1ps
 
-module cpu(
+module cpu #(
+    parameter string MEM_FILE = "programs/basic_datapath.hex"
+)(
     input logic clk,
     input logic reset
 );
@@ -68,7 +70,9 @@ module cpu(
     // --------------------------------------------------
     // Instruction Memory
     // --------------------------------------------------
-    imem imem_inst (
+    imem #(
+        .MEM_FILE(MEM_FILE)
+    ) imem_inst (
         .address(pc),
         .instruction(instruction)
     );

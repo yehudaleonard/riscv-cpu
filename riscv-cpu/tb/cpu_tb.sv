@@ -1,13 +1,17 @@
 `timescale 1ns/1ps
 
-module cpu_tb;
+module cpu_tb #(
+    parameter string MEM_FILE = "programs/basic_datapath.hex"
+);
 
     logic clk;
     logic reset;
 
     logic test_failed;
 
-    cpu dut (
+    cpu #(
+        .MEM_FILE(MEM_FILE)
+    ) dut (
         .clk(clk),
         .reset(reset)
     );
@@ -88,13 +92,6 @@ module cpu_tb;
             reset_cpu();
 
             // ----------------------------
-            // Load Program
-            // ----------------------------
-            dut.imem_inst.memory[0] = 32'h00500093; // addi x1, x0, 5
-            dut.imem_inst.memory[1] = 32'h00A00113; // addi x2, x0, 10
-            dut.imem_inst.memory[2] = 32'h002081B3; // add  x3, x1, x2
-
-            // ----------------------------
             // Execute Program
             // ----------------------------
             run_cycles(3);
@@ -120,17 +117,6 @@ module cpu_tb;
             $display("========================================");
 
             reset_cpu();
-
-            // ----------------------------
-            // Load Program
-            // ----------------------------
-            dut.imem_inst.memory[0] = 32'h01400093; // addi x1, x0, 20
-            dut.imem_inst.memory[1] = 32'h00700113; // addi x2, x0, 7
-
-            dut.imem_inst.memory[2] = 32'h402081B3; // sub  x3, x1, x2
-            dut.imem_inst.memory[3] = 32'h0020F233; // and  x4, x1, x2
-            dut.imem_inst.memory[4] = 32'h0020E2B3; // or   x5, x1, x2
-            dut.imem_inst.memory[5] = 32'h0020C333; // xor  x6, x1, x2
 
             // ----------------------------
             // Execute Program
@@ -163,14 +149,6 @@ module cpu_tb;
             reset_cpu();
 
             // ----------------------------
-            // Load Program
-            // ----------------------------
-            dut.imem_inst.memory[0] = 32'hFFB00093; // addi x1, x0, -5
-            dut.imem_inst.memory[1] = 32'h00300113; // addi x2, x0, 3
-            dut.imem_inst.memory[2] = 32'h0020A1B3; // slt  x3, x1, x2
-            dut.imem_inst.memory[3] = 32'h00208233; // add  x4, x1, x2
-
-            // ----------------------------
             // Execute Program
             // ----------------------------
             run_cycles(4);
@@ -199,13 +177,6 @@ module cpu_tb;
             reset_cpu();
 
             // ----------------------------
-            // Load Program
-            // ----------------------------
-            dut.imem_inst.memory[0] = 32'h07B00013; // addi x0, x0, 123
-            dut.imem_inst.memory[1] = 32'h00500093; // addi x1, x0, 5
-            dut.imem_inst.memory[2] = 32'h00008133; // add  x2, x1, x0
-
-            // ----------------------------
             // Execute Program
             // ----------------------------
             run_cycles(3);
@@ -225,17 +196,29 @@ module cpu_tb;
         reset = 0;
         test_failed = 0;
 
-        test_basic_datapath();
-        test_alu_operations();
-        test_signed_operations();
-        test_x0_protection();
+        if (MEM_FILE == "programs/basic_datapath.hex")
+            test_basic_datapath();
+
+        else if (MEM_FILE == "programs/alu_operations.hex")
+            test_alu_operations();
+
+        else if (MEM_FILE == "programs/signed_operations.hex")
+            test_signed_operations();
+
+        else if (MEM_FILE == "programs/x0_protection.hex")
+            test_x0_protection();
+
+        else begin
+            $error("Unknown MEM_FILE = %s", MEM_FILE);
+            test_failed = 1;
+        end
 
         $display("\n========================================");
 
         if (test_failed)
             $display("TEST RESULT: FAILED");
         else
-            $display("ALL CPU TESTS PASSED");
+            $display("CPU TEST PASSED");
 
         $display("========================================\n");
 
