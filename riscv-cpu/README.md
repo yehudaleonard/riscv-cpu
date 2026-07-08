@@ -4,6 +4,8 @@
 
 Custom 32-bit RISC-V CPU implemented in SystemVerilog.
 
+The current implementation supports a subset of the RISC-V ISA, including R-type and I-type arithmetic instructions. The processor is built using a modular RTL architecture and verified with automated ModelSim regression tests.
+
 ## Architecture
 
 Components:
@@ -13,19 +15,21 @@ Components:
 - Control Unit
 - Register File
 - ALU
-- MUX
+- 2-to-1 Multiplexer (MUX)
+- Top-level CPU Integration
 
 ## Verification
 
 Automated ModelSim regression tests:
 
-✓ Basic datapath
-✓ ALU operations
-✓ Signed arithmetic
-✓ x0 protection
+- Basic datapath
+- ALU operations
+- Signed arithmetic
+- x0 protection
 
-## Future Work
+## Project Structure
 
-- Assembler
-- More instructions
-- Pipeline architecture
+- rtl/        RTL implementation
+- tb/         SystemVerilog testbenches
+- programs/   HEX programs used for CPU verification
+- sim/        ModelSim compilation and regression scripts
