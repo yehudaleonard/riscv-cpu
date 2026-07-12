@@ -1,0 +1,5 @@
+# Basic Datapath Test
+
+addi x1, x0, 5    # 00500093
+addi x2, x0, 10   # 00A00113
+add  x3, x1, x2   # 002081B3
