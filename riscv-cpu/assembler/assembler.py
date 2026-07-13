@@ -16,7 +16,9 @@ Future functionality:
 
 from pathlib import Path
 import sys
-from parser import parse_instruction
+import parser
+import encoder
+import writer
 
 
 def main() -> None:
@@ -34,7 +36,7 @@ def main() -> None:
     print(f"Output : {output_path}")
     print()
 
-    instructions = []
+    machine_code = []
 
     with input_path.open("r") as source_file:
         for line_number, line in enumerate(source_file, start=1):
@@ -44,20 +46,26 @@ def main() -> None:
             if not line:
                 continue
 
-            instruction = parse_instruction(
+            instruction = parser.parse_instruction(
                 line,
                 line_number,
             )
 
-            instructions.append(instruction)
+            encoded_instruction = encoder.encode_instruction(
+                instruction,
+            )
 
-    print("Parsed Instructions:")
-    print()
+            machine_code.append(
+                encoded_instruction
+            )
 
-    for instruction in instructions:
-        print(instruction)
+    writer.write_hex_file(
+        output_path,
+        machine_code,
+    )
     
     print()
+    print(f"Wrote {len(machine_code)} instructions to {output_path}")
     print("Done.")
 
 
