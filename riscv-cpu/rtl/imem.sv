@@ -12,6 +12,7 @@ module imem #(
     initial begin
         $readmemh(MEM_FILE, memory);
     end
+    
     // 256 instructions -> use address[9:2]
     assign instruction = memory[address[9:2]];
 
