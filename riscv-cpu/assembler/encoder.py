@@ -37,6 +37,15 @@ def encode_instruction(
             definition,
         )
 
+    elif (
+        definition.instruction_format
+        == isa.InstructionFormat.S
+    ):
+        return encode_s_type(
+            instruction,
+            definition,
+        )
+
     else:
         raise RuntimeError(
             f"Unsupported instruction format: "
@@ -92,6 +101,37 @@ def encode_i_type(
         | (rs1 << 15)
         | (definition.funct3 << 12)
         | (rd << 7)
+        | definition.opcode
+    )
+
+    return machine_code
+
+def encode_s_type(
+    instruction: Instruction,
+    definition: isa.InstructionDefinition,
+) -> int:
+    """
+    Encode one S-Type instruction.
+    """
+
+    rs2, rs1, imm = instruction.operands
+
+    rs2 = register_to_number(rs2)
+    rs1 = register_to_number(rs1)
+    imm = immediate_to_number(
+        imm,
+        instruction.line_number,
+    )
+
+    imm_upper = (imm >> 5) & 0x7F
+    imm_lower = imm & 0x1F
+
+    machine_code = (
+        (imm_upper << 25)
+        | (rs2 << 20)
+        | (rs1 << 15)
+        | (definition.funct3 << 12)
+        | (imm_lower << 7)
         | definition.opcode
     )
 

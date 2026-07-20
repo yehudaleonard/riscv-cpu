@@ -29,10 +29,17 @@ module decoder(
 
         case (opcode)
 
-            // I-Type (ADDI)
-            7'b0010011:
+            // I-Type Immediate (ADDI, LW)
+            7'b0010011,
+            7'b0000011:
                 imm = {{20{instruction[31]}},
                        instruction[31:20]};
+
+            // S-Type Immediate (SW)
+            7'b0100011:
+                imm = {{20{instruction[31]}},
+                       instruction[31:25],
+                       instruction[11:7]};
 
             default:
                 imm = 32'b0;

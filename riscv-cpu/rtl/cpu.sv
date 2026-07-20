@@ -36,6 +36,8 @@ module cpu #(
     // --------------------------------------------------
     logic       reg_write;
     logic       alu_src;
+    logic       mem_write;
+    logic       mem_to_reg;
     logic [3:0] alu_ctrl;
 
     // --------------------------------------------------
@@ -51,6 +53,16 @@ module cpu #(
     logic [31:0] alu_result;
 
     logic zero;
+
+    // --------------------------------------------------
+    // Data Memory
+    // --------------------------------------------------
+    logic [31:0] read_data;
+
+    // --------------------------------------------------
+    // Write Back
+    // --------------------------------------------------
+    logic [31:0] write_back_data;
 
     // --------------------------------------------------
     // Next PC Logic
@@ -104,6 +116,8 @@ module cpu #(
 
         .reg_write(reg_write),
         .alu_src(alu_src),
+        .mem_write(mem_write),
+        .mem_to_reg(mem_to_reg),
         .alu_ctrl(alu_ctrl)
     );
 
@@ -118,7 +132,7 @@ module cpu #(
         .reg_source_2_address(rs2),
 
         .reg_destination(rd),
-        .reg_data(alu_result),
+        .reg_data(write_back_data),
 
         .reg_source_1_data(reg_data1),
         .reg_source_2_data(reg_data2)
@@ -131,6 +145,7 @@ module cpu #(
         .a(reg_data2),
         .b(imm),
         .sel(alu_src),
+
         .y(alu_in2)
     );
 
@@ -144,6 +159,28 @@ module cpu #(
 
         .result(alu_result),
         .zero(zero)
+    );
+
+    // --------------------------------------------------
+    // Data Memory
+    // --------------------------------------------------
+    dmem dmem_inst (
+        .clk(clk),
+        .write_enable(mem_write),
+        .address(alu_result),
+        .write_data(reg_data2),
+        
+        .read_data(read_data)
+    );
+
+    // --------------------------------------------------
+    // Write-Back MUX
+    // --------------------------------------------------
+    mux2 write_back_mux (
+        .a(alu_result),
+        .b(read_data),
+        .sel(mem_to_reg),
+        .y(write_back_data)
     );
 
 endmodule

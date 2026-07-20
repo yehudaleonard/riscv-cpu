@@ -52,7 +52,52 @@ def split_instruction(line: str) -> tuple[str, list[str]]:
             for operand in parts[1].split(",")
         ]
 
+    if mnemonic in ("lw", "sw"):
+        operands = parse_memory_operands(operands)
+
     return mnemonic, operands
+
+def parse_memory_operands(
+    operands: list[str],
+) -> list[str]:
+    """
+    Convert memory operand syntax.
+
+    Example:
+
+        ["x5", "8(x1)"]
+
+    becomes
+
+        ["x5", "x1", "8"]
+    """
+
+    if len(operands) != 2:
+        return operands
+
+    register = operands[0]
+    memory_operand = operands[1]
+
+    left_paren = memory_operand.find("(")
+    right_paren = memory_operand.find(")")
+
+    if (
+        left_paren == -1
+        or right_paren == -1
+        or right_paren < left_paren
+    ):
+        return operands
+
+    immediate = memory_operand[:left_paren].strip()
+    base_register = memory_operand[
+        left_paren + 1:right_paren
+    ].strip()
+
+    return [
+        register,
+        base_register,
+        immediate,
+    ]
 
 
 def validate_mnemonic(

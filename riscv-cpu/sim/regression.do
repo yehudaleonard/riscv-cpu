@@ -15,6 +15,12 @@ do sim/run_signed_operations.do
 
 do sim/run_x0_protection.do
 
+do sim/run_sw_test.do
+
+do sim/run_lw_test.do
+
+do sim/run_load_store_test.do
+
 echo ""
 echo "========================================"
 echo "CPU Regression Complete"
