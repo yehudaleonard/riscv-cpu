@@ -1,6 +1,6 @@
 # RV32I Assembler
 
-A custom assembler written in Python for the RISC-V RV32I processor developed in this project.
+A custom assembler written in Python for the single-cycle RISC-V RV32I processor developed in this project.
 
 The assembler converts human-readable RISC-V assembly instructions (`.s` files) into 32-bit machine code (`.hex` files) that can be loaded directly into the instruction memory of the custom RISC-V CPU.
 
@@ -34,6 +34,13 @@ Currently supported RV32I instruction subset:
 | Instruction | Description |
 |-------------|-------------|
 | ADDI | Add immediate |
+| LW | Load word |
+
+### S-Type Instructions
+
+| Instruction | Description |
+|-------------|-------------|
+| SW | Store word |
 
 
 ## Usage
@@ -42,3 +49,10 @@ From the project root:
 
 ```bash
 python assembler/assembler.py <input.s> <output.hex>
+```
+
+Example:
+
+```bash
+python assembler/assembler.py programs/load_store_test.s programs/load_store_test.hex
+```
