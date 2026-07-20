@@ -93,6 +93,7 @@ vsim -do sim/regression.do
 
 ## Tool Flow
 
+```text
 Assembly (.s)
         │
         ▼
@@ -109,3 +110,4 @@ Single-Cycle RV32I CPU
         │
         ▼
 ModelSim Simulation & Regression Tests
+```
