@@ -27,7 +27,7 @@ always_comb begin
                         ? 32'd1
                         : 32'd0; // SLT
 
-        default: result = '0;
+        default: result = 32'd0;
 
     endcase
 

@@ -17,6 +17,7 @@ class InstructionFormat(Enum):
     R = "R"
     I = "I"
     S = "S"
+    B = "B"
 
 
 class OperandType(Enum):
@@ -146,6 +147,30 @@ _INSTRUCTIONS = {
         ],
         opcode=0b0100011,
         funct3=0b010,
+        funct7=None,
+    ),
+
+    "beq": InstructionDefinition(
+        instruction_format=InstructionFormat.B,
+        operand_types=[
+            OperandType.RS1,
+            OperandType.RS2,
+            OperandType.IMM,
+        ],
+        opcode=0b1100011,
+        funct3=0b000,
+        funct7=None,
+    ),
+
+    "bne": InstructionDefinition(
+        instruction_format=InstructionFormat.B,
+        operand_types=[
+            OperandType.RS1,
+            OperandType.RS2,
+            OperandType.IMM,
+        ],
+        opcode=0b1100011,
+        funct3=0b001,
         funct7=None,
     ),
 }

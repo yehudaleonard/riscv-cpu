@@ -299,6 +299,48 @@ module cpu_tb #(
         end
     endtask
 
+    // --------------------------------------------------
+    // Test - Branch Instructions
+    // --------------------------------------------------
+    task test_branch();
+        begin
+            $display("\n========================================");
+            $display("Running Test 8 - Branch Instructions");
+            $display("========================================");
+
+            reset_cpu();
+
+            // ----------------------------
+            // Execute Program
+            // ----------------------------
+            run_cycles(24);
+
+            // ----------------------------
+            // Verify Results
+            // ----------------------------
+            // BEQ/BNE results
+            check_reg(10, 32'd1);
+            check_reg(11, 32'd2);
+            check_reg(12, 32'd3);
+            check_reg(13, 32'd4);
+            check_reg(14, 32'd5);
+            check_reg(15, 32'd6);
+
+            // Large branch target
+            check_reg(18, 32'd99);
+
+            // Verify skipped instructions
+            check_reg(20, 32'd0);
+            check_reg(21, 32'd0);
+            check_reg(1, 32'd5);
+            check_reg(2, 32'd5);
+            check_reg(3, 32'd5);
+            check_reg(4, 32'd6);
+
+            check_pc(32'd120);
+        end
+    endtask
+
     initial begin
         clk = 0;
         reset = 0;
@@ -324,6 +366,9 @@ module cpu_tb #(
 
         else if (MEM_FILE == "programs/load_store_test.hex")
             test_load_store();
+
+        else if (MEM_FILE == "programs/branch_test.hex")
+            test_branch();
 
         else begin
             $error("Unknown MEM_FILE = %s", MEM_FILE);

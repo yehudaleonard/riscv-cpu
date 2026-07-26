@@ -9,17 +9,21 @@ module control_unit(
     output logic       alu_src,
     output logic [3:0] alu_ctrl,
     output logic       mem_write,
-    output logic       mem_to_reg
+    output logic       mem_to_reg,
+    output logic       branch,
+    output logic       branch_not_equal
 );
 
     always_comb begin
 
         // Default outputs
-        reg_write  = 1'b0;
-        alu_src    = 1'b0;
-        mem_write  = 1'b0;
-        mem_to_reg = 1'b0;
-        alu_ctrl   = 4'b0000;
+        reg_write        = 1'b0;
+        alu_src          = 1'b0;
+        mem_write        = 1'b0;
+        mem_to_reg       = 1'b0;
+        alu_ctrl         = 4'b0000;
+        branch           = 1'b0;
+        branch_not_equal = 1'b0;
 
         case (opcode)
 
@@ -67,6 +71,26 @@ module control_unit(
                         mem_write = 1'b1;
                         alu_ctrl  = 4'b0000;
                     end
+
+                endcase
+
+            end
+
+            // B-Type Branch
+            7'b1100011: begin
+
+                alu_src = 1'b0;
+                alu_ctrl = 4'b0001;   // SUB
+
+                case (funct3)
+
+                    // BEQ
+                    3'b000:
+                        branch = 1'b1;
+
+                    // BNE
+                    3'b001:
+                        branch_not_equal = 1'b1;
 
                 endcase
 

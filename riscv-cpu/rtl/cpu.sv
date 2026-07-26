@@ -39,6 +39,8 @@ module cpu #(
     logic       mem_write;
     logic       mem_to_reg;
     logic [3:0] alu_ctrl;
+    logic       branch;
+    logic       branch_not_equal;
 
     // --------------------------------------------------
     // Register File
@@ -65,10 +67,21 @@ module cpu #(
     logic [31:0] write_back_data;
 
     // --------------------------------------------------
-    // Next PC Logic
+    // Branch Unit Output
     // --------------------------------------------------
-    assign pc_next = pc + 32'd4;
+    logic take_branch;
 
+    // --------------------------------------------------
+    // Next PC
+    // --------------------------------------------------
+    next_pc next_pc_inst (
+        .pc(pc),
+        .imm(imm),
+        .take_branch(take_branch),
+
+        .pc_next(pc_next)
+    );
+    
     // --------------------------------------------------
     // Program Counter
     // --------------------------------------------------
@@ -118,7 +131,9 @@ module cpu #(
         .alu_src(alu_src),
         .mem_write(mem_write),
         .mem_to_reg(mem_to_reg),
-        .alu_ctrl(alu_ctrl)
+        .alu_ctrl(alu_ctrl),
+        .branch(branch),
+        .branch_not_equal(branch_not_equal)
     );
 
     // --------------------------------------------------
@@ -159,6 +174,17 @@ module cpu #(
 
         .result(alu_result),
         .zero(zero)
+    );
+
+    // --------------------------------------------------
+    // Branch Unit
+    // --------------------------------------------------
+    branch_unit branch_unit_inst (
+        .branch(branch),
+        .branch_not_equal(branch_not_equal),
+        .zero(zero),
+
+        .take_branch(take_branch)
     );
 
     // --------------------------------------------------
