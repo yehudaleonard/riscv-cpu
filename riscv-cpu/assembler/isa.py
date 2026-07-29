@@ -18,6 +18,7 @@ class InstructionFormat(Enum):
     I = "I"
     S = "S"
     B = "B"
+    J = "J"
 
 
 class OperandType(Enum):
@@ -37,7 +38,7 @@ class InstructionDefinition:
     operand_types: list[OperandType]
 
     opcode: int
-    funct3: int
+    funct3: int | None
     funct7: int | None
 
 
@@ -126,7 +127,19 @@ _INSTRUCTIONS = {
         funct7=None,
     ),
 
-        "lw": InstructionDefinition(
+    "jalr": InstructionDefinition(
+        instruction_format=InstructionFormat.I,
+        operand_types=[
+            OperandType.RD,
+            OperandType.RS1,
+            OperandType.IMM,
+        ],
+        opcode=0b1100111,
+        funct3=0b000,
+        funct7=None,
+    ),
+
+    "lw": InstructionDefinition(
         instruction_format=InstructionFormat.I,
         operand_types=[
             OperandType.RD,
@@ -171,6 +184,17 @@ _INSTRUCTIONS = {
         ],
         opcode=0b1100011,
         funct3=0b001,
+        funct7=None,
+    ),
+
+    "jal": InstructionDefinition(
+        instruction_format=InstructionFormat.J,
+        operand_types=[
+            OperandType.RD,
+            OperandType.IMM,
+        ],
+        opcode=0b1101111,
+        funct3=None,
         funct7=None,
     ),
 }

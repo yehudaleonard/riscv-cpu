@@ -35,12 +35,26 @@ Currently supported RV32I instruction subset:
 |-------------|-------------|
 | ADDI | Add immediate |
 | LW | Load word |
+| JALR | Jump and link register |
 
 ### S-Type Instructions
 
 | Instruction | Description |
 |-------------|-------------|
 | SW | Store word |
+
+### B-Type Instructions
+
+| Instruction | Description |
+|-------------|-------------|
+| BEQ | Branch if equal |
+| BNE | Branch if not equal |
+
+### J-Type Instructions
+
+| Instruction | Description |
+|-------------|-------------|
+| JAL | Jump and link |
 
 
 ## Usage

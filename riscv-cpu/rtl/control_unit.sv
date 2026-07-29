@@ -9,10 +9,16 @@ module control_unit(
     output logic       alu_src,
     output logic [3:0] alu_ctrl,
     output logic       mem_write,
-    output logic       mem_to_reg,
+    output logic [1:0] writeback_select,
     output logic       branch,
-    output logic       branch_not_equal
+    output logic       branch_not_equal,
+    output logic       jump,
+    output logic       jump_register
 );
+    // Register file write-back source selection
+    localparam logic [1:0] WB_ALU = 2'b00;
+    localparam logic [1:0] WB_MEM = 2'b01;
+    localparam logic [1:0] WB_PC4 = 2'b10;
 
     always_comb begin
 
@@ -20,10 +26,12 @@ module control_unit(
         reg_write        = 1'b0;
         alu_src          = 1'b0;
         mem_write        = 1'b0;
-        mem_to_reg       = 1'b0;
+        writeback_select = WB_ALU;
         alu_ctrl         = 4'b0000;
         branch           = 1'b0;
         branch_not_equal = 1'b0;
+        jump             = 1'b0;
+        jump_register    = 1'b0;
 
         case (opcode)
 
@@ -50,14 +58,39 @@ module control_unit(
 
                     // LW
                     3'b010: begin
-                        reg_write  = 1'b1;
-                        alu_src    = 1'b1;
-                        mem_to_reg = 1'b1;
-                        alu_ctrl   = 4'b0000;
+                        reg_write        = 1'b1;
+                        alu_src          = 1'b1;
+                        writeback_select = WB_MEM;
+                        alu_ctrl         = 4'b0000;
                     end
 
                 endcase
 
+            end
+
+            // I-Type Jump Register
+            7'b1100111: begin
+
+                case (funct3)
+
+                    // JALR
+                    3'b000: begin
+                        reg_write        = 1'b1;
+                        alu_src          = 1'b1;
+                        alu_ctrl         = 4'b0000; // ADD
+                        writeback_select = WB_PC4;
+                        jump_register    = 1'b1;
+                    end
+
+                endcase
+
+            end
+
+            // J-Type Jump
+            7'b1101111: begin
+                reg_write        = 1'b1;
+                jump             = 1'b1;
+                writeback_select = WB_PC4;
             end
 
             // S-Type Store

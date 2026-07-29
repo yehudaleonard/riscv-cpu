@@ -1,7 +1,6 @@
 `timescale 1ns / 1ps
 
-module dmem
-(
+module dmem(
     input  logic        clk,
     input  logic        write_enable,
     input  logic [31:0] address,

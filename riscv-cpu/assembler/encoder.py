@@ -55,6 +55,15 @@ def encode_instruction(
             definition,
         )
 
+    elif (
+        definition.instruction_format
+        == isa.InstructionFormat.J
+    ):
+        return encode_j_type(
+            instruction,
+            definition,
+        )
+
     else:
         raise RuntimeError(
             f"Unsupported instruction format: "
@@ -100,10 +109,14 @@ def encode_i_type(
 
     rd = register_to_number(rd)
     rs1 = register_to_number(rs1)
-    imm = immediate_to_number(
-        imm,
-        instruction.line_number,
-    )
+    imm = immediate_to_number(imm)
+
+    if imm < -2048 or imm > 2047:
+        raise ValueError(
+            f"Line {instruction.line_number}: "
+            f"Immediate {imm} "
+            f"does not fit in a signed 12-bit field."
+        )
 
     machine_code = (
         ((imm & 0xFFF) << 20)
@@ -114,6 +127,7 @@ def encode_i_type(
     )
 
     return machine_code
+
 
 def encode_s_type(
     instruction: Instruction,
@@ -127,10 +141,14 @@ def encode_s_type(
 
     rs2 = register_to_number(rs2)
     rs1 = register_to_number(rs1)
-    imm = immediate_to_number(
-        imm,
-        instruction.line_number,
-    )
+    imm = immediate_to_number(imm)
+
+    if imm < -2048 or imm > 2047:
+        raise ValueError(
+            f"Line {instruction.line_number}: "
+            f"Immediate {imm} "
+            f"does not fit in a signed 12-bit field."
+        )
 
     imm_upper = (imm >> 5) & 0x7F
     imm_lower = imm & 0x1F
@@ -146,9 +164,10 @@ def encode_s_type(
 
     return machine_code
 
+
 def encode_b_type(
-    instruction,
-    definition,
+    instruction: Instruction,
+    definition: isa.InstructionDefinition,
 ) -> int:
     """
     Encode one B-Type instruction.
@@ -158,11 +177,14 @@ def encode_b_type(
 
     rs1 = register_to_number(rs1)
     rs2 = register_to_number(rs2)
+    imm = immediate_to_number(imm)
 
-    imm = immediate_to_number(
-        imm,
-        instruction.line_number,
-    )
+    if imm < -4096 or imm > 4094:
+        raise ValueError(
+            f"Line {instruction.line_number}: "
+            f"Branch offset {imm} "
+            f"does not fit in a signed 13-bit field."
+        )
 
     if imm % 4 != 0:
         raise ValueError(
@@ -190,6 +212,53 @@ def encode_b_type(
 
     return machine_code
 
+
+def encode_j_type(
+    instruction: Instruction,
+    definition: isa.InstructionDefinition,
+) -> int:
+    """
+    Encode one J-Type instruction.
+    """
+
+    rd, imm = instruction.operands
+
+    rd = register_to_number(rd)
+
+    imm = immediate_to_number(imm)
+
+    if imm < -(2 ** 20) or imm > ((2 ** 20) - 2):
+        raise ValueError(
+            f"Line {instruction.line_number}: "
+            f"Jump offset {imm} "
+            f"does not fit in a signed 21-bit field."
+        )
+
+    if imm % 4 != 0:
+        raise ValueError(
+            f"Line {instruction.line_number}: "
+            "Jump offset must be aligned to 4 bytes."
+        )
+
+    imm &= 0x1FFFFF
+
+    imm_20 = (imm >> 20) & 0x1
+    imm_10_1 = (imm >> 1) & 0x3FF
+    imm_11 = (imm >> 11) & 0x1
+    imm_19_12 = (imm >> 12) & 0xFF
+
+    machine_code = (
+        (imm_20 << 31)
+        | (imm_10_1 << 21)
+        | (imm_11 << 20)
+        | (imm_19_12 << 12)
+        | (rd << 7)
+        | definition.opcode
+    )
+
+    return machine_code
+
+
 def register_to_number(
     register: str,
 ) -> int:
@@ -202,20 +271,9 @@ def register_to_number(
 
 def immediate_to_number(
     immediate: str,
-    line_number: int,
 ) -> int:
     """
-    Convert an immediate string into an integer and
-    verify that it fits in a signed 12-bit field.
+    Convert an immediate string into an integer.
     """
 
-    value = int(immediate)
-
-    if value < -2048 or value > 2047:
-        raise ValueError(
-            f"Line {line_number}: "
-            f"Immediate {value} "
-            f"does not fit in a signed 12-bit field."
-        )
-
-    return value
+    return int(immediate)

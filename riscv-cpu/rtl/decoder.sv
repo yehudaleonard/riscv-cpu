@@ -31,9 +31,19 @@ module decoder(
 
             // I-Type Immediate (ADDI, LW)
             7'b0010011,
-            7'b0000011:
+            7'b0000011,
+            7'b1100111:
                 imm = {{20{instruction[31]}},
                        instruction[31:20]};
+
+            // J-Type Immediate (JAL)
+            7'b1101111:
+                imm = {{11{instruction[31]}},
+                    instruction[31],      // imm[20]
+                    instruction[19:12],   // imm[19:12]
+                    instruction[20],      // imm[11]
+                    instruction[30:21],   // imm[10:1]
+                    1'b0};                // imm[0]
 
             // S-Type Immediate (SW)
             7'b0100011:

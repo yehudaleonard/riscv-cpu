@@ -4,7 +4,7 @@
 
 Custom 32-bit single-cycle RISC-V processor implementing a subset of the RV32I instruction set.
 
-The processor currently supports arithmetic, logical, comparison, immediate, and load/store instructions. It is built using a modular RTL architecture and verified with automated ModelSim regression tests.
+The processor currently supports arithmetic, logical, comparison, immediate, load/store, branch, and jump instructions. It is built using a modular RTL architecture and verified with automated ModelSim regression tests.
 
 The project also includes a custom Python-based assembler that converts RISC-V assembly programs into hexadecimal machine code files that can be loaded directly into the processor's instruction memory.
 
@@ -29,12 +29,26 @@ Currently supported RV32I instruction subset:
 |-------------|-------------|
 | ADDI | Add immediate |
 | LW | Load word |
+| JALR | Jump and link register |
 
 ### S-Type Instructions
 
 | Instruction | Description |
 |-------------|-------------|
 | SW | Store word |
+
+### B-Type Instructions
+
+| Instruction | Description |
+|-------------|-------------|
+| BEQ | Branch if equal |
+| BNE | Branch if not equal |
+
+### J-Type Instructions
+
+| Instruction | Description |
+|-------------|-------------|
+| JAL | Jump and link |
 
 ## Architecture
 
@@ -47,7 +61,7 @@ Main RTL components:
 - Control Unit
 - Register File
 - Arithmetic Logic Unit (ALU)
-- 2-to-1 Multiplexers (MUX)
+- 2-to-1 and 3-to-1 Multiplexers (MUX)
 - Top-level CPU Integration
 
 ## Assembler
@@ -70,6 +84,8 @@ Automated ModelSim regression tests:
 - Store (SW)
 - Load (LW)
 - Load/store integration
+- Branch instructions (BEQ/BNE)
+- Jump instructions (JAL/JALR)
 
 Each test program is written in RISC-V assembly, assembled into machine code, and executed on the processor simulation.
 

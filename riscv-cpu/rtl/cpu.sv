@@ -8,10 +8,11 @@ module cpu #(
 );
 
     // --------------------------------------------------
-    // PC
+    // Program Counter
     // --------------------------------------------------
     logic [31:0] pc;
     logic [31:0] pc_next;
+    logic [31:0] pc_plus4;
 
     // --------------------------------------------------
     // Instruction Fetch
@@ -32,29 +33,37 @@ module cpu #(
     logic [31:0] imm;
 
     // --------------------------------------------------
-    // Control Unit Outputs
+    // Control Signals
     // --------------------------------------------------
     logic       reg_write;
     logic       alu_src;
     logic       mem_write;
-    logic       mem_to_reg;
     logic [3:0] alu_ctrl;
+    logic [1:0] writeback_select;
+
     logic       branch;
     logic       branch_not_equal;
+    logic       jump;
+    logic       jump_register;
 
     // --------------------------------------------------
     // Register File
     // --------------------------------------------------
     logic [31:0] reg_data1;
     logic [31:0] reg_data2;
+    logic [31:0] write_back_data;
 
     // --------------------------------------------------
-    // ALU Path
+    // ALU
     // --------------------------------------------------
     logic [31:0] alu_in2;
     logic [31:0] alu_result;
+    logic        zero;
 
-    logic zero;
+    // --------------------------------------------------
+    // Branch Control
+    // --------------------------------------------------
+    logic take_branch;
 
     // --------------------------------------------------
     // Data Memory
@@ -62,24 +71,18 @@ module cpu #(
     logic [31:0] read_data;
 
     // --------------------------------------------------
-    // Write Back
-    // --------------------------------------------------
-    logic [31:0] write_back_data;
-
-    // --------------------------------------------------
-    // Branch Unit Output
-    // --------------------------------------------------
-    logic take_branch;
-
-    // --------------------------------------------------
     // Next PC
     // --------------------------------------------------
     next_pc next_pc_inst (
         .pc(pc),
         .imm(imm),
+        .jalr_target(alu_result),
         .take_branch(take_branch),
+        .jump(jump),
+        .jump_register(jump_register),
 
-        .pc_next(pc_next)
+        .pc_next(pc_next),
+        .pc_plus4(pc_plus4)
     );
     
     // --------------------------------------------------
@@ -130,10 +133,12 @@ module cpu #(
         .reg_write(reg_write),
         .alu_src(alu_src),
         .mem_write(mem_write),
-        .mem_to_reg(mem_to_reg),
+        .writeback_select(writeback_select),
         .alu_ctrl(alu_ctrl),
         .branch(branch),
-        .branch_not_equal(branch_not_equal)
+        .branch_not_equal(branch_not_equal),
+        .jump(jump),
+        .jump_register(jump_register)
     );
 
     // --------------------------------------------------
@@ -202,10 +207,11 @@ module cpu #(
     // --------------------------------------------------
     // Write-Back MUX
     // --------------------------------------------------
-    mux2 write_back_mux (
+    mux3 write_back_mux (
         .a(alu_result),
         .b(read_data),
-        .sel(mem_to_reg),
+        .c(pc_plus4),
+        .sel(writeback_select),
         .y(write_back_data)
     );
 

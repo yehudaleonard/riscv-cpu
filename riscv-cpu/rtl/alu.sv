@@ -1,6 +1,6 @@
 `timescale 1ns/1ps
 
-module alu (
+module alu(
     input  logic [31:0] a,
     input  logic [31:0] b,
     input  logic [3:0]  alu_ctrl,

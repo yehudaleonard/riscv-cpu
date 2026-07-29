@@ -23,6 +23,8 @@ do sim/run_load_store_test.do
 
 do sim/run_branch_test.do
 
+do sim/run_jal_jalr_test.do
+
 echo ""
 echo "========================================"
 echo "CPU Regression Complete"

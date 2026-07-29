@@ -1,6 +1,6 @@
 `timescale 1ns/1ps
 
-module branch_unit (
+module branch_unit(
     input logic branch,
     input logic branch_not_equal,
     input logic zero,

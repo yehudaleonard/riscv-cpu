@@ -341,6 +341,62 @@ module cpu_tb #(
         end
     endtask
 
+        // --------------------------------------------------
+    // Test - JAL and JALR Instructions
+    // --------------------------------------------------
+    task test_jal_jalr();
+        begin
+            $display("\n========================================");
+            $display("Running Test 9 - JAL and JALR Instructions");
+            $display("========================================");
+
+            reset_cpu();
+
+            // ----------------------------
+            // Execute Program
+            // ----------------------------
+            run_cycles(14);
+
+            // ----------------------------
+            // Verify Results
+            // ----------------------------
+
+            // JAL target reached
+            check_reg(10, 32'd1);
+
+            // JAL link address
+            check_reg(5, 32'd28);
+
+
+            // JALR target reached
+            check_reg(12, 32'd2);
+
+            // JALR link address
+            check_reg(6, 32'd44);
+
+
+            // JALR bit 0 clearing target reached
+            check_reg(14, 32'd3);
+
+            // JALR bit 0 clearing link address
+            check_reg(7, 32'd68);
+
+
+            // Verify skipped instructions
+            check_reg(20, 32'd0);
+            check_reg(21, 32'd0);
+            check_reg(22, 32'd0);
+            check_reg(23, 32'd0);
+            check_reg(24, 32'd0);
+            check_reg(25, 32'd0);
+
+
+            // Final PC check
+            check_pc(32'd80);
+
+        end
+    endtask
+
     initial begin
         clk = 0;
         reset = 0;
@@ -369,6 +425,9 @@ module cpu_tb #(
 
         else if (MEM_FILE == "programs/branch_test.hex")
             test_branch();
+
+        else if (MEM_FILE == "programs/jal_jalr_test.hex")
+            test_jal_jalr();
 
         else begin
             $error("Unknown MEM_FILE = %s", MEM_FILE);
