@@ -4,9 +4,11 @@
 
 Custom 32-bit single-cycle RISC-V processor implementing a subset of the RV32I instruction set.
 
-The processor currently supports arithmetic, logical, comparison, immediate, load/store, branch, and jump instructions. It is built using a modular RTL architecture and verified with automated ModelSim regression tests.
+The processor currently supports arithmetic, logical, comparison, immediate, load/store, branch, jump, and upper-immediate instructions. It is built using a modular RTL architecture and verified with automated ModelSim regression tests.
 
-The project also includes a custom Python-based assembler that converts RISC-V assembly programs into hexadecimal machine code files that can be loaded directly into the processor's instruction memory.
+The project also includes a custom Python-based assembler that converts RISC-V assembly programs (`.s` files) into hexadecimal machine code (`.hex` files) that can be loaded directly into the processor's instruction memory.
+
+Together, the processor and custom assembler provide a complete workflow for writing, assembling, and executing RISC-V assembly programs.
 
 ## Supported Instructions
 
@@ -44,6 +46,13 @@ Currently supported RV32I instruction subset:
 | BEQ | Branch if equal |
 | BNE | Branch if not equal |
 
+### U-Type Instructions
+
+| Instruction | Description |
+|-------------|-------------|
+| LUI | Load upper immediate |
+| AUIPC | Add upper immediate to the current PC and store the result |
+
 ### J-Type Instructions
 
 | Instruction | Description |
@@ -61,7 +70,7 @@ Main RTL components:
 - Control Unit
 - Register File
 - Arithmetic Logic Unit (ALU)
-- 2-to-1 and 3-to-1 Multiplexers (MUX)
+- 2-to-1 and 4-to-1 Multiplexers (MUX)
 - Top-level CPU Integration
 
 ## Assembler
@@ -70,7 +79,7 @@ The assembler supports:
 
 - Assembly parsing and validation
 - ISA-based instruction definitions
-- RISC-V instruction encoding
+- RV32I instruction encoding
 - Generation of `.hex` instruction memory files
 
 ## Verification
@@ -86,6 +95,7 @@ Automated ModelSim regression tests:
 - Load/store integration
 - Branch instructions (BEQ/BNE)
 - Jump instructions (JAL/JALR)
+- Upper-immediate instructions (LUI/AUIPC)
 
 Each test program is written in RISC-V assembly, assembled into machine code, and executed on the processor simulation.
 

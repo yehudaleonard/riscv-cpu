@@ -397,6 +397,39 @@ module cpu_tb #(
         end
     endtask
 
+    // --------------------------------------------------
+    // Test - LUI and AUIPC Instructions
+    // --------------------------------------------------
+    task test_lui_auipc();
+        begin
+            $display("\n========================================");
+            $display("Running Test 10 - LUI and AUIPC Instructions");
+            $display("========================================");
+
+            reset_cpu();
+
+            // ----------------------------
+            // Execute Program
+            // ----------------------------
+            run_cycles(2);
+
+            // ----------------------------
+            // Verify Results
+            // ----------------------------
+
+            // LUI
+            check_reg(20, 32'h12345000);
+
+            // AUIPC
+            // AUIPC instruction is at PC = 4
+            check_reg(21, 32'h00010004);
+
+            // Final PC check
+            check_pc(32'd8);
+
+        end
+    endtask
+
     initial begin
         clk = 0;
         reset = 0;
@@ -428,6 +461,9 @@ module cpu_tb #(
 
         else if (MEM_FILE == "programs/jal_jalr_test.hex")
             test_jal_jalr();
+
+        else if (MEM_FILE == "programs/lui_auipc_test.hex")
+            test_lui_auipc();
 
         else begin
             $error("Unknown MEM_FILE = %s", MEM_FILE);

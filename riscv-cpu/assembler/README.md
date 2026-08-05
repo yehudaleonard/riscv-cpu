@@ -9,9 +9,10 @@ The assembler converts human-readable RISC-V assembly instructions (`.s` files) 
 
 - Parses RISC-V assembly instructions.
 - Validates instructions and operands using a centralized ISA definition.
-- Encodes assembly instructions into 32-bit RISC-V machine instructions.
+- Encodes supported RV32I instructions into 32-bit RISC-V machine code.
 - Generates hexadecimal instruction memory files compatible with the CPU simulation environment.
 - Provides error detection for invalid instructions, registers, operand types, and immediate ranges.
+- Supports both decimal and hexadecimal immediate values.
 
 
 ## Supported Instructions
@@ -49,6 +50,13 @@ Currently supported RV32I instruction subset:
 |-------------|-------------|
 | BEQ | Branch if equal |
 | BNE | Branch if not equal |
+
+### U-Type Instructions
+
+| Instruction | Description |
+|-------------|-------------|
+| LUI | Load upper immediate |
+| AUIPC | Add upper immediate to PC |
 
 ### J-Type Instructions
 

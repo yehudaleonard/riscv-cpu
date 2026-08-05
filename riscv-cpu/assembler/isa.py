@@ -18,6 +18,7 @@ class InstructionFormat(Enum):
     I = "I"
     S = "S"
     B = "B"
+    U = "U"
     J = "J"
 
 
@@ -184,6 +185,28 @@ _INSTRUCTIONS = {
         ],
         opcode=0b1100011,
         funct3=0b001,
+        funct7=None,
+    ),
+
+    "lui": InstructionDefinition(
+        instruction_format=InstructionFormat.U,
+        operand_types=[
+            OperandType.RD,
+            OperandType.IMM,
+        ],
+        opcode=0b0110111,
+        funct3=None,
+        funct7=None,
+    ),
+
+    "auipc": InstructionDefinition(
+        instruction_format=InstructionFormat.U,
+        operand_types=[
+            OperandType.RD,
+            OperandType.IMM,
+        ],
+        opcode=0b0010111,
+        funct3=None,
         funct7=None,
     ),
 

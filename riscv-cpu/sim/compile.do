@@ -6,7 +6,7 @@ vlog rtl/decoder.sv
 vlog rtl/control_unit.sv
 vlog rtl/register_file.sv
 vlog rtl/mux2.sv
-vlog rtl/mux3.sv
+vlog rtl/mux4.sv
 vlog rtl/alu.sv
 vlog rtl/dmem.sv
 vlog rtl/branch_unit.sv

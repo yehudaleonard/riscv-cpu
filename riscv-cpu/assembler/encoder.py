@@ -57,6 +57,15 @@ def encode_instruction(
 
     elif (
         definition.instruction_format
+        == isa.InstructionFormat.U
+    ):
+        return encode_u_type(
+            instruction,
+            definition,
+        )
+
+    elif (
+        definition.instruction_format
         == isa.InstructionFormat.J
     ):
         return encode_j_type(
@@ -213,6 +222,35 @@ def encode_b_type(
     return machine_code
 
 
+def encode_u_type(
+    instruction: Instruction,
+    definition: isa.InstructionDefinition,
+) -> int:
+    """
+    Encode one U-Type instruction.
+    """
+
+    rd, imm = instruction.operands
+
+    rd = register_to_number(rd)
+    imm = immediate_to_number(imm)
+
+    if imm < 0 or imm > 0xFFFFF:
+        raise ValueError(
+            f"Line {instruction.line_number}: "
+            f"Immediate {imm} "
+            f"does not fit in a 20-bit field."
+        )
+
+    machine_code = (
+        (imm << 12)
+        | (rd << 7)
+        | definition.opcode
+    )
+
+    return machine_code
+
+
 def encode_j_type(
     instruction: Instruction,
     definition: isa.InstructionDefinition,
@@ -276,4 +314,4 @@ def immediate_to_number(
     Convert an immediate string into an integer.
     """
 
-    return int(immediate)
+    return int(immediate, 0)

@@ -1,20 +1,22 @@
 `timescale 1ns/1ps
 
-module mux3_tb;
+module mux4_tb;
 
     logic [31:0] a;
     logic [31:0] b;
     logic [31:0] c;
+    logic [31:0] d;
     logic [1:0]  sel;
 
     logic [31:0] y;
 
     logic test_failed;
 
-    mux3 dut (
+    mux4 dut (
         .a(a),
         .b(b),
         .c(c),
+        .d(d),
         .sel(sel),
         .y(y)
     );
@@ -24,6 +26,7 @@ module mux3_tb;
         a = 0;
         b = 0;
         c = 0;
+        d = 0;
         sel = 0;
         test_failed = 0;
 
@@ -35,6 +38,7 @@ module mux3_tb;
         a   = 32'd123;
         b   = 32'd456;
         c   = 32'd789;
+        d   = 32'd101112;
         sel = 2'b00;
 
         #1;
@@ -69,24 +73,24 @@ module mux3_tb;
         end
 
         // ----------------------------------
-        // TEST 4: Default case
+        // TEST 4: Select input D
         // ----------------------------------
         sel = 2'b11;
 
         #1;
 
-        if (y != 32'd0) begin
+        if (y != 32'd101112) begin
             test_failed = 1;
-            $error("TEST 4 FAILED: sel=11 should select default value");
+            $error("TEST 4 FAILED: sel=11 should select input d");
         end
 
         // ----------------------------------
         // FINAL RESULT
         // ----------------------------------
         if (!test_failed)
-            $display("ALL MUX3 TESTS PASSED");
+            $display("ALL MUX4 TESTS PASSED");
         else
-            $display("MUX3 TESTS FAILED");
+            $display("MUX4 TESTS FAILED");
 
         $finish;
 

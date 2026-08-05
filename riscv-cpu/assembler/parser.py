@@ -191,6 +191,7 @@ def validate_register(
         )
 
 
+
 def validate_immediate(
     immediate: str,
     line_number: int,
@@ -199,7 +200,9 @@ def validate_immediate(
     Validate an immediate value.
     """
 
-    if not immediate.lstrip("-").isdigit():
+    try:
+        int(immediate, 0)
+    except ValueError:
         raise ValueError(
             f"Line {line_number}: "
             f"Expected immediate, got '{immediate}'."

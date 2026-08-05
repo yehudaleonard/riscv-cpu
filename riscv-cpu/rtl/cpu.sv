@@ -36,7 +36,8 @@ module cpu #(
     // Control Signals
     // --------------------------------------------------
     logic       reg_write;
-    logic       alu_src;
+    logic       alu_src_a;
+    logic       alu_src_b;
     logic       mem_write;
     logic [3:0] alu_ctrl;
     logic [1:0] writeback_select;
@@ -56,6 +57,7 @@ module cpu #(
     // --------------------------------------------------
     // ALU
     // --------------------------------------------------
+    logic [31:0] alu_in1;
     logic [31:0] alu_in2;
     logic [31:0] alu_result;
     logic        zero;
@@ -131,7 +133,8 @@ module cpu #(
         .funct7(funct7),
 
         .reg_write(reg_write),
-        .alu_src(alu_src),
+        .alu_src_a(alu_src_a),        
+        .alu_src_b(alu_src_b),
         .mem_write(mem_write),
         .writeback_select(writeback_select),
         .alu_ctrl(alu_ctrl),
@@ -159,12 +162,23 @@ module cpu #(
     );
 
     // --------------------------------------------------
-    // ALU Source MUX
+    // ALU Source A MUX
     // --------------------------------------------------
-    mux2 alu_mux (
+    mux2 alu_src_a_mux (
+        .a(reg_data1),
+        .b(pc),
+        .sel(alu_src_a),
+
+        .y(alu_in1)
+    );
+
+    // --------------------------------------------------
+    // ALU Source B MUX
+    // --------------------------------------------------
+    mux2 alu_src_b_mux (
         .a(reg_data2),
         .b(imm),
-        .sel(alu_src),
+        .sel(alu_src_b),
 
         .y(alu_in2)
     );
@@ -173,7 +187,7 @@ module cpu #(
     // ALU
     // --------------------------------------------------
     alu alu_inst (
-        .a(reg_data1),
+        .a(alu_in1),
         .b(alu_in2),
         .alu_ctrl(alu_ctrl),
 
@@ -207,10 +221,11 @@ module cpu #(
     // --------------------------------------------------
     // Write-Back MUX
     // --------------------------------------------------
-    mux3 write_back_mux (
+    mux4 write_back_mux (
         .a(alu_result),
         .b(read_data),
         .c(pc_plus4),
+        .d(imm),
         .sel(writeback_select),
         .y(write_back_data)
     );
