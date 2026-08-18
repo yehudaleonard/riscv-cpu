@@ -33,8 +33,8 @@ module decoder_tb;
 
     initial begin
 
-        instruction  = 32'b0;
-        test_failed   = 0;
+        instruction = 32'b0;
+        test_failed = 0;
 
         #1;
 
@@ -104,6 +104,158 @@ module decoder_tb;
         if (imm != 32'hFFFFFFFB) begin
             test_failed = 1;
             $error("TEST 3 FAILED: sign extension");
+        end
+
+        // ----------------------------------
+        // TEST 4: JALR immediate
+        // ----------------------------------
+        instruction = 32'b000000000100_00001_000_00010_1100111;
+        #1;
+
+        if (opcode != 7'b1100111) begin
+            test_failed = 1;
+            $error("TEST 4 FAILED: opcode");
+        end
+
+        if (rd != 5'd2) begin
+            test_failed = 1;
+            $error("TEST 4 FAILED: rd");
+        end
+
+        if (rs1 != 5'd1) begin
+            test_failed = 1;
+            $error("TEST 4 FAILED: rs1");
+        end
+
+        if (imm != 32'd4) begin
+            test_failed = 1;
+            $error("TEST 4 FAILED: imm");
+        end
+
+        // ----------------------------------
+        // TEST 5: JAL immediate
+        // ----------------------------------
+        instruction = 32'b0000000_00010_00000_000_00001_1101111;
+        #1;
+
+        if (opcode != 7'b1101111) begin
+            test_failed = 1;
+            $error("TEST 5 FAILED: opcode");
+        end
+
+        if (rd != 5'd1) begin
+            test_failed = 1;
+            $error("TEST 5 FAILED: rd");
+        end
+
+        if (imm != 32'd2) begin
+            test_failed = 1;
+            $error("TEST 5 FAILED: imm");
+        end
+
+        // ----------------------------------
+        // TEST 6: LUI immediate
+        // ----------------------------------
+        instruction = 32'h123450B7;
+        #1;
+
+        if (opcode != 7'b0110111) begin
+            test_failed = 1;
+            $error("TEST 6 FAILED: opcode");
+        end
+
+        if (rd != 5'd1) begin
+            test_failed = 1;
+            $error("TEST 6 FAILED: rd");
+        end
+
+        if (imm != 32'h12345000) begin
+            test_failed = 1;
+            $error("TEST 6 FAILED: imm");
+        end
+
+        // ----------------------------------
+        // TEST 7: AUIPC immediate
+        // ----------------------------------
+        instruction = 32'h12345097;
+        #1;
+
+        if (opcode != 7'b0010111) begin
+            test_failed = 1;
+            $error("TEST 7 FAILED: opcode");
+        end
+
+        if (rd != 5'd1) begin
+            test_failed = 1;
+            $error("TEST 7 FAILED: rd");
+        end
+
+        if (imm != 32'h12345000) begin
+            test_failed = 1;
+            $error("TEST 7 FAILED: imm");
+        end
+
+        // ----------------------------------
+        // TEST 8: S-type (sw x2, 8(x1))
+        // ----------------------------------
+        instruction = 32'b0000000_00010_00001_010_01000_0100011;
+        #1;
+
+        if (opcode != 7'b0100011) begin
+            test_failed = 1;
+            $error("TEST 8 FAILED: opcode");
+        end
+
+        if (rs1 != 5'd1) begin
+            test_failed = 1;
+            $error("TEST 8 FAILED: rs1");
+        end
+
+        if (rs2 != 5'd2) begin
+            test_failed = 1;
+            $error("TEST 8 FAILED: rs2");
+        end
+
+        if (imm != 32'd8) begin
+            test_failed = 1;
+            $error("TEST 8 FAILED: imm");
+        end
+
+        // ----------------------------------
+        // TEST 9: B-type (beq x1, x2, 8)
+        // ----------------------------------
+        instruction = 32'b0000000_00010_00001_000_01000_1100011;
+        #1;
+
+        if (opcode != 7'b1100011) begin
+            test_failed = 1;
+            $error("TEST 9 FAILED: opcode");
+        end
+
+        if (rs1 != 5'd1) begin
+            test_failed = 1;
+            $error("TEST 9 FAILED: rs1");
+        end
+
+        if (rs2 != 5'd2) begin
+            test_failed = 1;
+            $error("TEST 9 FAILED: rs2");
+        end
+
+        if (imm != 32'd8) begin
+            test_failed = 1;
+            $error("TEST 9 FAILED: imm");
+        end
+
+        // ----------------------------------
+        // TEST 10: B-type negative immediate
+        // ----------------------------------
+        instruction = 32'b1111111_00010_00001_000_1000_1110_0011;
+        #1;
+
+        if (imm != 32'hFFFFFFF0) begin
+            test_failed = 1;
+            $error("TEST 10 FAILED: B-type sign extension");
         end
 
         // ----------------------------------

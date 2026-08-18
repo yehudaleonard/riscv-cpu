@@ -142,9 +142,9 @@ module dmem_tb;
         $display("\n========================================");
 
         if (test_failed)
-            $display("\nDMEM TEST FAILED");
+            $display("DMEM TEST FAILED");
         else
-            $display("\nALL DMEM TESTS PASSED");
+            $display("ALL DMEM TESTS PASSED");
 
         $display("========================================\n");
 

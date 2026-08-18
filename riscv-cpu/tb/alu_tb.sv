@@ -109,6 +109,24 @@ module alu_tb;
         end
 
         // ----------------------------------
+        // TEST 7: ZERO FLAG
+        // ----------------------------------
+        a = 5;
+        b = 5;
+        alu_ctrl = 4'b0001;
+        #10;
+
+        if (result != 0) begin
+            $error("ZERO result failed");
+            test_failed = 1;
+        end
+
+        if (zero != 1) begin
+            $error("ZERO flag failed");
+            test_failed = 1;
+        end
+
+        // ----------------------------------
         // FINAL RESULT
         // ----------------------------------
         if (!test_failed)

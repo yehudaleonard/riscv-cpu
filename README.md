@@ -84,7 +84,11 @@ The assembler supports:
 
 ## Verification
 
-Automated ModelSim regression tests:
+The processor is verified at two levels using SystemVerilog testbenches and ModelSim.
+
+### CPU-Level Verification
+
+The complete CPU is verified through automated regression tests covering:
 
 - Basic datapath
 - ALU operations
@@ -97,7 +101,26 @@ Automated ModelSim regression tests:
 - Jump instructions (JAL/JALR)
 - Upper-immediate instructions (LUI/AUIPC)
 
-Each test program is written in RISC-V assembly, assembled into machine code, and executed on the processor simulation.
+Each test program is written in RISC-V assembly, assembled into machine code, and executed on the complete processor.
+
+### Module-Level Verification
+
+Individual RTL modules are also tested independently through dedicated SystemVerilog testbenches.
+
+Module-level tests cover:
+
+- ALU
+- Branch Unit
+- Control Unit
+- Decoder
+- Data Memory
+- Instruction Memory
+- Multiplexers
+- Next PC Logic
+- Program Counter
+- Register File
+
+The module-level regression compiles the RTL and testbenches, then runs each module testbench sequentially.
 
 ## Simulation
 
@@ -105,6 +128,12 @@ Run the complete CPU regression:
 
 ```bash
 vsim -do sim/regression.do
+```
+
+Run the module-level regression:
+
+```bash
+vsim -do sim/module_simulation.do
 ```
 
 ## Project Structure
