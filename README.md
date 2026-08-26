@@ -59,7 +59,11 @@ Currently supported RV32I instruction subset:
 |-------------|-------------|
 | JAL | Jump and link |
 
-## Architecture
+## Architecture & Datapath
+
+The CPU is implemented as a modular single-cycle datapath. The main datapath and control connections are shown below.
+
+![RISC-V CPU Architecture](riscv-cpu/docs/cpu_architecture.png)
 
 Main RTL components:
 
